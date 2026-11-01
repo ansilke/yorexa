@@ -42,19 +42,64 @@ const services = [
 
 const SCROLL_STEP = 0.85
 
+// MOBILE CARD ANIMATION STYLES
+const ServicesAnimationStyles = () => (
+  <style>{`
+    .service-mobile-card {
+      opacity: 0;
+      transform: translateY(45px) scale(0.96);
+    }
+
+    .service-mobile-card.service-card-visible {
+      animation: serviceCardEntrance 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+    }
+
+    @keyframes serviceCardEntrance {
+      0% {
+        opacity: 0;
+        transform: translateY(45px) scale(0.96);
+      }
+
+      70% {
+        opacity: 1;
+      }
+
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .service-mobile-card {
+        animation: none !important;
+        opacity: 1;
+        transform: none;
+      }
+    }
+  `}</style>
+)
+
 function Services() {
   const sectionRef = useRef(null)
+
   const [scrollY, setScrollY] = useState(0)
   const [sectionStart, setSectionStart] = useState(0)
   const [viewportHeight, setViewportHeight] = useState(0)
+  const [isMobile, setIsMobile] = useState(false)
 
+  // SCREEN MEASUREMENTS
   useEffect(() => {
     const updateMeasurements = () => {
+      const mobile = window.innerWidth < 768
+      setIsMobile(mobile)
+
       if (!sectionRef.current) return
 
       setSectionStart(
         sectionRef.current.getBoundingClientRect().top + window.scrollY
       )
+
       setViewportHeight(window.innerHeight)
       setScrollY(window.scrollY)
     }
@@ -74,9 +119,129 @@ function Services() {
     }
   }, [])
 
+  // MOBILE: REVEAL EACH CARD ON SCROLL
+  useEffect(() => {
+    if (!isMobile) return
+
+    const cards = document.querySelectorAll('.service-mobile-card')
+
+    if (!cards.length) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const card = entry.target
+            const index = Number(card.dataset.index)
+
+            card.style.animationDelay = `${index * 350}ms`
+            card.classList.add('service-card-visible')
+
+            observer.unobserve(card)
+          }
+        })
+      },
+      {
+        threshold: 0.15,
+      }
+    )
+
+    cards.forEach((card) => observer.observe(card))
+
+    return () => observer.disconnect()
+  }, [isMobile])
+
   const scrollProgress = Math.max(0, scrollY - sectionStart)
   const step = viewportHeight * SCROLL_STEP
 
+  // MOBILE LAYOUT
+  if (isMobile) {
+    return (
+      <>
+        <ServicesAnimationStyles />
+
+        <section
+          ref={sectionRef}
+          id="services"
+          className="w-full bg-white px-4 py-20"
+        >
+          {/* HEADING */}
+          <div className="mb-10 flex w-full flex-col items-center text-center">
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.3em] text-gray-400">
+              WHAT WE OFFER
+            </p>
+
+            <h2 className="text-5xl font-extrabold tracking-[-2px] text-black">
+              What We Do
+            </h2>
+
+            <p className="mx-auto mt-3 max-w-[580px] text-xs leading-6 text-[#555]">
+              Everything your brand needs to build a stronger digital presence,
+              from technology and creative design to marketing.
+            </p>
+          </div>
+
+          {/* MOBILE CARDS */}
+          <div className="flex flex-col gap-5">
+            {services.map((service, index) => (
+              <div
+                key={service.number}
+                data-index={index}
+                className="service-mobile-card flex min-h-[340px] w-full flex-col items-center justify-between overflow-hidden rounded-[22px] px-5 py-7 shadow-lg"
+                style={{
+                  backgroundColor: service.background,
+                  color: service.textColor,
+                }}
+              >
+                {/* CARD HEADER */}
+                <div className="w-full">
+                  <div className="mb-8 flex items-center justify-between">
+                    <span className="text-[9px] font-bold tracking-[0.2em] opacity-70">
+                      YOREXA — SERVICES
+                    </span>
+
+                    <span className="text-[10px] font-bold tracking-widest opacity-70">
+                      {service.number} / 04
+                    </span>
+                  </div>
+
+                  <h3 className="text-[clamp(27px,8vw,40px)] font-extrabold leading-[1.05] tracking-[-1.5px]">
+                    {service.title}
+                  </h3>
+                </div>
+
+                {/* DESCRIPTION */}
+                <div className="mx-auto my-10 w-full px-1 text-center">
+                  <p className="text-sm font-medium leading-relaxed">
+                    {service.description}
+                  </p>
+                </div>
+
+                {/* TAGS */}
+                <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-3">
+                  {service.tags.map((tag, tagIndex) => (
+                    <React.Fragment key={tag}>
+                      <span className="text-xs font-semibold">
+                        {tag}
+                      </span>
+
+                      {tagIndex !== service.tags.length - 1 && (
+                        <span className="text-base font-bold opacity-80">
+                          ✦
+                        </span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      </>
+    )
+  }
+
+  // DESKTOP LAYOUT — ORIGINAL SCROLL ANIMATION
   return (
     <section
       ref={sectionRef}
@@ -86,7 +251,6 @@ function Services() {
         height: '355svh',
       }}
     >
-      {/* PINNED VIEWPORT */}
       <div className="sticky top-0 h-[100svh] w-full overflow-hidden bg-white">
 
         {/* HEADING */}
@@ -107,13 +271,10 @@ function Services() {
 
         {/* CARD STACK AREA */}
         <div className="absolute inset-x-0 top-[43svh] h-[58svh] px-4 sm:px-6 lg:px-[5%]">
-
           {services.map((service, index) => {
             let progress = 1
 
-            if (index === 0) {
-              progress = 1
-            } else {
+            if (index !== 0) {
               const cardStart = (index - 1) * step
 
               progress =
@@ -134,9 +295,10 @@ function Services() {
                 style={{
                   zIndex: index + 1,
                   transform: `translateY(calc(${translateY}% + ${index * 13}px))`,
-                  willChange: index === 0 || progress < 1
-                    ? 'transform'
-                    : 'auto',
+                  willChange:
+                    index === 0 || progress < 1
+                      ? 'transform'
+                      : 'auto',
                 }}
               >
                 <div
