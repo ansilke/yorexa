@@ -83,7 +83,7 @@ const WorkAnimationStyles = () => (
     }
 
     .work-mobile-card.work-card-visible {
-      animation: workCardEntrance 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: workCardEntrance 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     @keyframes workCardEntrance {

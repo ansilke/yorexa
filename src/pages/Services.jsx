@@ -51,7 +51,7 @@ const ServicesAnimationStyles = () => (
     }
 
     .service-mobile-card.service-card-visible {
-      animation: serviceCardEntrance 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: serviceCardEntrance 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     @keyframes serviceCardEntrance {

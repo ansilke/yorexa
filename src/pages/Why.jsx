@@ -66,7 +66,7 @@ const WhyAnimationStyles = () => (
     }
 
     .why-mobile-card.why-card-visible {
-      animation: whyCardEntrance 1200ms cubic-bezier(0.22, 1, 0.36, 1) both;
+      animation: whyCardEntrance 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
     }
 
     @keyframes whyCardEntrance {

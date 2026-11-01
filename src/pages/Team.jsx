@@ -50,7 +50,7 @@ const TeamAnimationStyles = () => (
 
     .team-section-visible .team-card-reveal {
       animation: teamCardEntrance 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-      animation-delay: calc(var(--card-index) * 480ms);
+      animation-delay: calc(var(--card-index) * 180ms);
     }
 
     @keyframes teamCardEntrance {
