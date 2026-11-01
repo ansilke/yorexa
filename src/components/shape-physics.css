@@ -1,0 +1,23 @@
+
+.shape-physics {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.shape-physics canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: pan-y;
+  outline: none;
+}
+
+.shape-physics canvas[data-interactive="true"] {
+  cursor: grab;
+}
+
+.shape-physics canvas[data-interactive="true"]:active {
+  cursor: grabbing;
+}

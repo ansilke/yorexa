@@ -1,0 +1,243 @@
+
+/*!
+ReactDrops Component License 1.0
+
+Copyright (c) 2026 ReactDrops
+*/
+
+.fan-gallery {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  overflow: hidden;
+  overflow: clip;
+  padding: 2px 0 20px;
+  color: inherit;
+}
+
+.fan-gallery .fan-gallery-heading {
+  margin: 0 0 24px;
+  padding: 0 16px;
+  font-family: inherit;
+  text-align: center;
+}
+
+.fan-gallery-heading h2 {
+  margin: 0;
+  font: inherit;
+  font-size: clamp(1.5rem, 4cqw, 2.5rem);
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.fan-gallery-heading p {
+  margin: 12px 0 0;
+  font: inherit;
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.fan-gallery-stage {
+  position: relative;
+  width: 100%;
+  min-height: 120px;
+  height: 320px;
+  isolation: isolate;
+  touch-action: pan-y;
+  user-select: none;
+  caret-color: transparent;
+  overflow: visible;
+}
+
+.fan-gallery-card {
+  appearance: none;
+  contain: none;
+  isolation: isolate;
+  position: absolute;
+  left: 0;
+  top: 0;
+  display: block;
+  width: 176px;
+  aspect-ratio: 0.8;
+  padding: 0;
+  box-sizing: border-box;
+  border: 6.5px solid transparent;
+  border-radius: 18px;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+  overflow: visible;
+  cursor: pointer;
+  backface-visibility: hidden;
+  transform-origin: 50% 50%;
+}
+
+/* Individual Team Member Border Colors */
+
+.fan-gallery-card-1 {
+  border-color: #9052F7;
+}
+
+.fan-gallery-card-2 {
+  border-color: #FF6500;
+}
+
+.fan-gallery-card-3 {
+  border-color: #986B43;
+}
+
+.fan-gallery-card-4 {
+  border-color: #08C779;
+}
+
+.fan-gallery-card-5 {
+  border-color: #FF263D;
+}
+
+.fan-gallery.is-active {
+  position: relative;
+  z-index: 1;
+  overflow-x: visible;
+  overflow-y: clip;
+}
+
+.fan-gallery.is-animating {
+  position: relative;
+  z-index: 1;
+  overflow: visible;
+}
+
+.fan-gallery-stage.is-moving .fan-gallery-card {
+  will-change: transform;
+}
+
+/* Team Images */
+
+.fan-gallery-card img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 10px;
+  pointer-events: none;
+  user-select: none;
+}
+
+/* Hover Labels */
+
+.fan-gallery-label {
+  position: absolute;
+  left: 50%;
+  z-index: 20;
+  display: flex;
+  width: max-content;
+  max-width: 210px;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(-50%, 8px);
+  transition:
+    opacity 0.3s ease,
+    transform 0.3s ease,
+    visibility 0.3s ease;
+}
+
+.fan-gallery-label-top {
+  top: -66px;
+}
+
+.fan-gallery-label-bottom {
+  bottom: -66px;
+}
+
+.fan-gallery-label-name {
+  color: #18181b;
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+
+.fan-gallery-label-role {
+  margin-top: 3px;
+  color: #71717a;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.5;
+  white-space: nowrap;
+}
+
+/* Desktop Hover */
+
+.fan-gallery-card:hover .fan-gallery-label,
+.fan-gallery-card:focus-visible .fan-gallery-label {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(-50%, 0);
+}
+
+.fan-gallery-card:focus-visible {
+  outline: 2px solid currentColor;
+  outline-offset: 4px;
+}
+
+.fan-gallery:not([data-ready]) .fan-gallery-stage,
+.fan-gallery:not([data-ready]) .fan-gallery-heading {
+  visibility: hidden;
+}
+
+/* Mobile Layout */
+
+@media (max-width: 600px) {
+  .fan-gallery {
+    padding-top: 24px;
+  }
+
+  .fan-gallery-label {
+    max-width: 150px;
+  }
+
+  .fan-gallery-label-name {
+    font-size: 12px;
+  }
+
+  .fan-gallery-label-role {
+    font-size: 9px;
+  }
+
+  .fan-gallery-label-top {
+    top: -56px;
+  }
+
+  .fan-gallery-label-bottom {
+    bottom: -56px;
+  }
+}
+
+/* Mobile Tap-to-Lift Effect */
+
+@media (hover: none) and (pointer: coarse) {
+  .fan-gallery-card {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .fan-gallery-card:not(.is-tapped) .fan-gallery-label {
+    opacity: 0;
+    visibility: hidden;
+    transform: translate(-50%, 8px);
+  }
+
+  .fan-gallery-card.is-tapped {
+    z-index: 50 !important;
+    filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.18));
+  }
+
+  .fan-gallery-card.is-tapped .fan-gallery-label {
+    opacity: 1;
+    visibility: visible;
+    transform: translate(-50%, 0);
+  }
+}
