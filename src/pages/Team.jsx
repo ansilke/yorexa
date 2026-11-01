@@ -40,41 +40,30 @@ const teamMembers = [
   },
 ];
 
-/* MOBILE ANIMATION STYLES */
+/* MOBILE ANIMATION STYLES — SAME AS SERVICES */
 const TeamAnimationStyles = () => (
   <style>{`
     .team-card-reveal {
       opacity: 0;
-      transform: translateY(45px) scale(0.94);
+      transform: translate3d(0, 32px, 0) scale(0.985);
+      will-change: transform, opacity;
     }
 
-    .team-section-visible .team-card-reveal {
-      animation: teamCardEntrance 700ms cubic-bezier(0.22, 1, 0.36, 1) both;
-      animation-delay: calc(var(--card-index) * 180ms);
-    }
+    .team-card-reveal.team-card-visible {
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
 
-    @keyframes teamCardEntrance {
-      0% {
-        opacity: 0;
-        transform: translateY(45px) scale(0.94);
-      }
-
-      70% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      transition:
+        opacity 700ms ease-out,
+        transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @media (prefers-reduced-motion: reduce) {
       .team-card-reveal,
-      .team-section-visible .team-card-reveal {
-        animation: none;
+      .team-card-reveal.team-card-visible {
         opacity: 1;
         transform: none;
+        transition: none !important;
       }
     }
   `}</style>
@@ -98,27 +87,37 @@ export default function Team() {
     };
   }, []);
 
-  // MOBILE SECTION ENTRANCE OBSERVER
+  // MOBILE CARD REVEAL ON SCROLL
   useEffect(() => {
     if (!isMobile) return;
 
-    const section = document.getElementById("team");
+    const cards = document.querySelectorAll(".team-card-reveal");
 
-    if (!section) return;
+    if (!cards.length) return;
 
     const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          section.classList.add("team-section-visible");
-          observer.disconnect();
-        }
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            const card = entry.target;
+            const index = Number(card.dataset.index);
+
+            // SAME SOFT STAGGER AS SERVICES, WORK AND WHY
+            card.style.transitionDelay = `${index * 100}ms`;
+
+            card.classList.add("team-card-visible");
+
+            observer.unobserve(card);
+          }
+        });
       },
       {
-        threshold: 0.15,
+        threshold: 0.08,
+        rootMargin: "0px 0px -30px 0px",
       }
     );
 
-    observer.observe(section);
+    cards.forEach((card) => observer.observe(card));
 
     return () => observer.disconnect();
   }, [isMobile]);
@@ -196,6 +195,7 @@ export default function Team() {
               {teamMembers.map((member, index) => (
                 <div
                   key={member.name}
+                  data-index={index}
                   className={`
                     team-card-reveal
                     flex min-w-0 flex-col items-center text-center
@@ -233,7 +233,7 @@ export default function Team() {
               ))}
             </div>
           ) : (
-            /* DESKTOP FAN GALLERY — ORIGINAL DESIGN */
+            /* DESKTOP FAN GALLERY — ORIGINAL DESIGN UNCHANGED */
             <div className="relative flex w-full min-h-0 flex-1 items-center justify-center">
               <div className="w-full min-w-0">
                 <FanGallery

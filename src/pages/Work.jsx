@@ -74,39 +74,30 @@ const getTextStyles = (color) => {
   };
 };
 
-// MOBILE CARD ANIMATION
+// MOBILE CARD ANIMATION — SAME AS SERVICES
 const WorkAnimationStyles = () => (
   <style>{`
     .work-mobile-card {
       opacity: 0;
-      transform: translateY(45px) scale(0.96);
+      transform: translate3d(0, 32px, 0) scale(0.985);
+      will-change: transform, opacity;
     }
 
     .work-mobile-card.work-card-visible {
-      animation: workCardEntrance 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
 
-    @keyframes workCardEntrance {
-      0% {
-        opacity: 0;
-        transform: translateY(45px) scale(0.96);
-      }
-
-      70% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      transition:
+        opacity 700ms ease-out,
+        transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .work-mobile-card {
-        animation: none !important;
+      .work-mobile-card,
+      .work-mobile-card.work-card-visible {
         opacity: 1;
         transform: none;
+        transition: none !important;
       }
     }
   `}</style>
@@ -140,8 +131,6 @@ function Work() {
     if (showMore) {
       setShowMore(false);
 
-      // WAIT FOR THE CARDS TO COLLAPSE,
-      // THEN KEEP THE USER NEAR THE TOGGLE BUTTON.
       requestAnimationFrame(() => {
         requestAnimationFrame(() => {
           mobileToggleRef.current?.scrollIntoView({
@@ -170,7 +159,9 @@ function Work() {
             const card = entry.target;
             const index = Number(card.dataset.index);
 
-            card.style.animationDelay = `${index * 380}ms`;
+            // SAME SOFT STAGGER AS SERVICES
+            card.style.transitionDelay = `${index * 100}ms`;
+
             card.classList.add("work-card-visible");
 
             observer.unobserve(card);
@@ -178,7 +169,8 @@ function Work() {
         });
       },
       {
-        threshold: 0.15,
+        threshold: 0.08,
+        rootMargin: "0px 0px -30px 0px",
       }
     );
 
@@ -287,7 +279,6 @@ function Work() {
           {/* MOBILE PROJECT CARDS */}
           <div className="flex w-full flex-col gap-5 px-3 pb-20 pt-9">
             {projects.map((project, index) => {
-              // SHOW ONLY FIRST TWO UNTIL SEE MORE IS CLICKED
               if (index >= 2 && !showMore) return null;
 
               const textStyles = getTextStyles(

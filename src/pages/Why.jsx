@@ -62,34 +62,25 @@ const WhyAnimationStyles = () => (
   <style>{`
     .why-mobile-card {
       opacity: 0;
-      transform: translateY(45px) scale(0.96);
+      transform: translate3d(0, 32px, 0) scale(0.985);
+      will-change: transform, opacity;
     }
 
     .why-mobile-card.why-card-visible {
-      animation: whyCardEntrance 180ms cubic-bezier(0.22, 1, 0.36, 1) both;
-    }
+      opacity: 1;
+      transform: translate3d(0, 0, 0) scale(1);
 
-    @keyframes whyCardEntrance {
-      0% {
-        opacity: 0;
-        transform: translateY(45px) scale(0.96);
-      }
-
-      70% {
-        opacity: 1;
-      }
-
-      100% {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-      }
+      transition:
+        opacity 700ms ease-out,
+        transform 850ms cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .why-mobile-card {
-        animation: none !important;
+      .why-mobile-card,
+      .why-mobile-card.why-card-visible {
         opacity: 1;
         transform: none;
+        transition: none !important;
       }
     }
   `}</style>
@@ -120,7 +111,7 @@ function Why() {
     }
   }, [])
 
-  // MOBILE: REVEAL EACH CARD ON SCROLL
+  // MOBILE: SMOOTH CARD REVEAL ON SCROLL
   useEffect(() => {
     if (!isMobile) return
 
@@ -135,7 +126,9 @@ function Why() {
             const card = entry.target
             const index = Number(card.dataset.index)
 
-            card.style.animationDelay = `${index * 380}ms`
+            // SOFT STAGGER DELAY
+            card.style.transitionDelay = `${index * 100}ms`
+
             card.classList.add('why-card-visible')
 
             observer.unobserve(card)
@@ -143,7 +136,8 @@ function Why() {
         })
       },
       {
-        threshold: 0.15,
+        threshold: 0.08,
+        rootMargin: '0px 0px -30px 0px',
       }
     )
 
